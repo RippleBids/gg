@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RippleBids Roadmap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Exo+2:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-green: #39FF14;
+      --dark-carbon: #1A1A1A;
+      --white: #FFFFFF;
+      --gray: #CCCCCC;
+      --black-glass: rgba(0, 0, 0, 0.5);
+      --blur: blur(10px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--dark-carbon) url('https://wallpaperaccess.com/full/660479.jpg') center/cover;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .custom-navbar {
+      background: #000000;
+      padding: 20px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .navbar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+    .navbar-brand span {
+      color: var(--neon-green);
+      font-size: 2.5rem;
+      font-weight: 900;
+      font-family: 'Exo 2', sans-serif;
+      text-shadow: 0 0 15px var(--neon-green);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      background: var(--black-glass);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .navbar-brand:hover span {
+      transform: scale(1.05);
+    }
+    .navbar-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: var(--white);
+      font-size: 1.2rem;
+      font-family: 'Roboto', sans-serif;
+      text-decoration: none;
+      padding: 12px 20px;
+      border: 2px solid transparent;
+      border-right: 2px solid var(--neon-green);
+      border-bottom: 2px solid var(--neon-green);
+      transition: all 0.3s ease;
+    }
+    .navbar-links a:hover, .navbar-links a.active {
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      text-shadow: 0 0 8px var(--neon-green);
+      transform: translateY(-2px);
+    }
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--neon-green);
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .hero {
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .timeline {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      padding: 50px 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--neon-green);
+      transform: translateX(-50%);
+      box-shadow: 0 0 12px var(--neon-green);
+    }
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      margin: 70px 0;
+      position: relative;
+    }
+    .timeline-item:nth-child(odd) {
+      flex-direction: row;
+    }
+    .timeline-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+    .timeline-content {
+      background: var(--black-glass);
+      backdrop-filter: var(--blur);
+      padding: 30px;
+      border-radius: 12px;
+      width: 45%;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+      transition: transform 0.3s ease;
+    }
+    .timeline-content:hover {
+      transform: scale(1.05);
+    }
+    .timeline-content h2 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 2rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+    }
+    .timeline-content p {
+      color: var(--gray);
+      font-size: 1.2rem;
+      line-height: 1.7;
+    }
+    .timeline-dot {
+      width: 30px;
+      height: 30px;
+      background: var(--neon-green);
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 15px var(--neon-green);
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.3); }
+    }
+    .custom-footer {
+      background: #000000;
+      padding: 30px;
+      text-align: center;
+      color: var(--gray);
+      border-top: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .social-links {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    .social-links a {
+      color: var(--neon-green);
+      font-size: 2.2rem;
+      transition: all 0.3s ease;
+    }
+    .social-links a:hover {
+      transform: scale(1.2);
+      text-shadow: 0 0 15px var(--neon-green);
+    }
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: row;
+        align-items: center;
+      }
+      .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #000000;
+        padding: 20px;
+        border-bottom: 2px solid var(--neon-green);
+      }
+      .navbar-links.active {
+        display: flex;
+      }
+      .navbar-toggle {
+        display: block;
+      }
+      .navbar-brand span {
+        font-size: 1.8rem;
+      }
+      .timeline::before {
+        left: 20px;
+      }
+      .timeline-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .timeline-content {
+        width: 80%;
+        margin-left: 40px;
+      }
+      .timeline-dot {
+        left: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <nav class="custom-navbar">
+    <div class="navbar-container">
+      <a href="/presale" class="navbar-brand"><span>RippleBids</span></a>
+      <button class="navbar-toggle" onclick="toggleMenu()" aria-label="Toggle navigation">☰</button>
+      <div class="navbar-links" id="navbar-links">
+        <a href="/presale" class="nav-link">Presale</a>
+        <a href="/whitepaper" class="nav-link">Whitepaper</a>
+        <a href="/roadmap" class="nav-link active">Roadmap</a>
+        <a href="/tokenomics" class="nav-link">Tokenomics</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/policy" class="nav-link">Policy</a>
+      </div>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="timeline">
+      <h1 style="font-family: 'Exo 2', sans-serif; font-size: 3.5rem; color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); margin-bottom: 2rem;">RippleBids Roadmap</h1>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h2>May 19, 2025: XRPB Presale</h2>
+          <p>Launch XRPB presale, raising 100k XRP (500M XRPB) to fund the marketplace of the future, revolutionizing Amazon and eBay.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h2>Aug 1, 2025: Platform Launch</h2>
+          <p>Roll out RippleBids, solving high fees, slow payments, and fraud with XRP transactions (~3 seconds, $0.01 fees).</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h2>Q1 2026: Mobile Apps</h2>
+          <p>Release iOS/Android apps, enabling global access, including unbanked users, with Xaman wallet integration.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h2>Q3 2026: Asset Tokenization</h2>
+          <p>Tokenize homes, cars, and collectibles as XRPL NFTs, expanding the marketplace’s offerings.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h2>Q2 2027: DeFi Integration</h2>
+          <p>Add lending, staking, and yield farming for XRPB, enhancing user benefits.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="custom-footer">
+    <div class="footer-content">
+      <p>© 2025 RippleBids. All rights reserved.</p>
+      <div class="social-links">
+        <a href="https://x.com/ripplebids" target="_blank"><i class="fab fa-x"></i></a>
+        <a href="https://t.me/ripplebids" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="https://www.tiktok.com/@ripplebids" target="_blank"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('navbar-links').classList.toggle('active');
+    }
+    function initBackground() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 2 + 1,
+          vx: Math.random() * 0.5 - 0.25,
+          vy: Math.random() * 0.5 - 0.25
+        });
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(57, 255, 20, 0.5)';
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+    window.onload = initBackground;
+  </script>
+</body>
+</html>
