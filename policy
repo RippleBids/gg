@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RippleBids Policy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Exo+2:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-green: #39FF14;
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray: #CCCCCC;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --blur: blur(10px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--black) url('https://wallpaperaccess.com/full/660479.jpg') center/cover;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .custom-navbar {
+      background: var(--black);
+      padding: 20px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .navbar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+    .navbar-brand span {
+      color: var(--neon-green);
+      font-size: 2.5rem;
+      font-weight: 900;
+      font-family: 'Exo 2', sans-serif;
+      text-shadow: 0 0 15px var(--neon-green);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .navbar-brand:hover span {
+      transform: scale(1.05);
+    }
+    .navbar-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: var(--white);
+      font-size: 1.2rem;
+      font-family: 'Roboto', sans-serif;
+      text-decoration: none;
+      padding: 12px 20px;
+      border: 2px solid transparent;
+      border-right: 2px solid var(--neon-green);
+      border-bottom: 2px solid var(--neon-green);
+      transition: all 0.3s ease;
+    }
+    .navbar-links a:hover, .navbar-links a.active {
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      text-shadow: 0 0 8px var(--neon-green);
+      transform: translateY(-2px);
+    }
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--neon-green);
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .hero {
+      padding: 100px 20px;
+      text-align: center;
