@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RippleBids Whitepaper</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Exo+2:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-green: #39FF14;
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray: #CCCCCC;
+      --tinted-black: rgba(0, 0, 0, 0.7);
+      --blur: blur(10px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: url('https://wallpaperaccess.com/full/660479.jpg') center/cover;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .custom-navbar {
+      background: var(--black);
+      padding: 15px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .navbar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+    .navbar-brand span {
+      color: var(--neon-green);
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-family: 'Exo 2', sans-serif;
+      text-shadow: 0 0 15px var(--neon-green);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 15px;
+      background: var(--tinted-black);
+      border: 2px solid var(--neon-green);
+      border-radius: 6px;
+      transition: transform 0.3s ease;
+    }
+    .navbar-brand:hover span {
+      transform: scale(1.05);
+    }
+    .navbar-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Roboto', sans-serif;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-top: 2px solid var(--neon-green);
+      border-left: 2px solid var(--neon-green);
+      border-bottom: none;
+      border-right: none;
+      border-radius: 6px;
+      background: var(--black);
+      transition: all 0.3s ease;
+      line-height: 1.2;
+    }
+    .navbar-links a:hover, .navbar-links a.active {
+      color: var(--black);
+      background: linear-gradient(45deg, var(--neon-green), #28a745);
+      box-shadow: 0 0 12px var(--neon-green);
+      transform: scale(1.03);
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--neon-green);
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+    .hero {
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .glass-container {
+      background: var(--tinted-black);
+      backdrop-filter: var(--blur);
+      border-radius: 15px;
+      padding: 3rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+      animation: glowFade 4s ease-in-out infinite;
+    }
+    @keyframes glowFade {
+      0%, 100% { box-shadow: 0 0 30px rgba(57, 255, 20, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(57, 255, 20, 0.7); }
+    }
+    h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 3.5rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 15px var(--neon-green);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 2.2rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+      margin: 2.5rem 0 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+    ul {
+      list-style: none;
+      padding-left: 20px;
+      margin-bottom: 1.5rem;
+    }
+    ul li {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    ul li::before {
+      content: '•';
+      color: var(--neon-green);
+      position: absolute;
+      left: -20px;
+      font-size: 1.8rem;
+    }
+    .download-btn, .invest-btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: var(--black);
+      color: var(--neon-green);
+      border-top: 2px solid var(--neon-green);
+      border-left: 2px solid var(--neon-green);
+      border-bottom: none;
+      border-right: none;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-family: 'Roboto', sans-serif;
+      transition: all 0.3s ease;
+      margin: 1rem;
+    }
+    .download-btn:hover, .invest-btn:hover {
+      background: linear-gradient(45deg, var(--neon-green), #28a745);
+      color: var(--black);
+      box-shadow: 0 0 25px var(--neon-green);
+      transform: scale(1.05);
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .custom-footer {
+      background: var(--black);
+      padding: 30px;
+      text-align: center;
+      color: var(--gray);
+      border-top: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .social-links {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    .social-links a {
+      color: var(--neon-green);
+      font-size: 2.2rem;
+      transition: all 0.3s ease;
+    }
+    .social-links a:hover {
+      transform: scale(1.2);
+      text-shadow: 0 0 15px var(--neon-green);
+    }
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: row;
+        align-items: center;
+      }
+      .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--black);
+        padding: 15px;
+        border-bottom: 2px solid var(--neon-green);
+      }
+      .navbar-links.active {
+        display: flex;
+      }
+      .navbar-toggle {
+        display: block;
+      }
+      .navbar-brand span {
+        font-size: 1.8rem;
+      }
+      .glass-container {
+        max-width: 90%;
+        padding: 2rem;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <nav class="custom-navbar">
+    <div class="navbar-container">
+      <a href="/presale" class="navbar-brand"><span>RippleBids</span></a>
+      <button class="navbar-toggle" onclick="toggleMenu()" aria-label="Toggle navigation">☰</button>
+      <div class="navbar-links" id="navbar-links">
+        <a href="/presale" class="nav-link">Presale</a>
+        <a href="/whitepaper" class="nav-link active">Whitepaper</a>
+        <a href="/roadmap" class="nav-link">Roadmap</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/policy" class="nav-link">Rules & Policy</a>
+        <a href="/tokenomics" class="nav-link">Tokenomics</a>
+      </div>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="glass-container">
+      <h1>RippleBids Whitepaper</h1>
+      <p>RippleBids is the marketplace of the future, revolutionizing Amazon and eBay with the XRP Ledger’s speed, low fees, and transparency.</p>
+      <h2>Who is Ripple & What is XRP?</h2>
+      <p>Ripple Labs, founded in 2012 in San Francisco, builds blockchain solutions for global payments using the XRP Ledger and XRP cryptocurrency. XRP enables fast, cheap cross-border transactions, rivaling systems like SWIFT.</p>
+      <h2>The Problem</h2>
+      <p>Amazon and eBay dominate online commerce but have flaws:</p>
+      <ul>
+        <li><strong>Amazon</strong>: High fees, centralized control, currency conversion issues, counterfeit risks, poor customer service.</li>
+        <li><strong>eBay</strong>: High transaction fees, slow cross-border payments, fraud risks, limited access for unbanked users.</li>
+      </ul>
+      <h2>RippleBids Solution</h2>
+      <p>RippleBids leverages XRPL to fix these issues:</p>
+      <ul>
+        <li><strong>Low Fees</strong>: 1.5-3.5% processing fees, no middlemen like PayPal.</li>
+        <li><strong>Fast Payments</strong>: ~3-second settlements for ~$0.01, no currency conversion.</li>
+        <li><strong>Transparency</strong>: Blockchain records ensure trust and auditability.</li>
+        <li><strong>Inclusivity</strong>: Unbanked users can participate via XRP wallets (e.g., Xaman).</li>
+        <li><strong>Security</strong>: Smart contracts and escrow prevent fraud; blockchain tracks product authenticity.</li>
+        <li><strong>Privacy</strong>: Minimal data collection compared to Amazon’s ad-driven model.</li>
+      </ul>
+      <h2>How It Works</h2>
+      <p>A seller lists an item for 50 XRP. A buyer with XRP in their Xaman wallet clicks “Buy,” approves the transaction, and XRPL processes it in ~3 seconds. After delivery confirmation, escrow releases funds to the seller.</p>
+      <h2>Profit Model</h2>
+      <p>RippleBids earns via:</p>
+      <ul>
+        <li><strong>Processing Fees</strong>: 1.5-3.5% per transaction.</li>
+        <li><strong>Memberships</strong>: $25-$50/month for verified sellers, boosting credibility.</li>
+      </ul>
+      <h2>XRPB Token</h2>
+      <p>XRPB powers RippleBids, enabling low-cost transactions, memberships, and future features like asset tokenization.</p>
+      <a href="/path/to/whitepaper.pdf" class="download-btn">Download Full Whitepaper</a>
+      <a href="/presale" class="invest-btn">Invest in XRPB</a>
+    </div>
+  </section>
+  <footer class="custom-footer">
+    <div class="footer-content">
+      <p>© 2025 RippleBids. All rights reserved.</p>
+      <div class="social-links">
+        <a href="https://x.com/ripplebids" target="_blank"><i class="fab fa-x"></i></a>
+        <a href="https://t.me/ripplebids" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="https://www.tiktok.com/@ripplebids" target="_blank"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('navbar-links').classList.toggle('active');
+    }
+    function setActiveLink() {
+      const links = document.querySelectorAll('.nav-link');
+      links.forEach(link => {
+        link.classList.remove('active');
+        if (link.href === window.location.href) {
+          link.classList.add('active');
+        }
+      });
+    }
+    function initBackground() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 2 + 1,
+          vx: Math.random() * 0.5 - 0.25,
+          vy: Math.random() * 0.5 - 0.25
+        });
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(57, 255, 20, 0.5)';
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+    window.onload = () => {
+      initBackground();
+      setActiveLink();
+    };
+  </script>
+</body>
+</html>
