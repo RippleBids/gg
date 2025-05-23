@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RippleBids Tokenomics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Exo+2:wght@700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --neon-green: #39FF14;
+      --dark-carbon: #1A1A1A;
+      --white: #FFFFFF;
+      --gray: #CCCCCC;
+      --black-glass: rgba(0, 0, 0, 0.5);
+      --blur: blur(10px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--dark-carbon) url('https://wallpaperaccess.com/full/660479.jpg') center/cover;
+      color: var(--white);
+      overflow-x: hidden;
+      position: relative;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .custom-navbar {
+      background: #000000;
+      padding: 20px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .navbar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+    .navbar-brand span {
+      color: var(--neon-green);
+      font-size: 2.5rem;
+      font-weight: 900;
+      font-family: 'Exo 2', sans-serif;
+      text-shadow: 0 0 15px var(--neon-green);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      background: var(--black-glass);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .navbar-brand:hover span {
+      transform: scale(1.05);
+    }
+    .navbar-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: var(--white);
+      font-size: 1.2rem;
+      font-family: 'Roboto', sans-serif;
+      text-decoration: none;
+      padding: 12px 20px;
+      border: 2px solid transparent;
+      border-right: 2px solid var(--neon-green);
+      border-bottom: 2px solid var(--neon-green);
+      transition: all 0.3s ease;
+    }
+    .navbar-links a:hover, .navbar-links a.active {
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      text-shadow: 0 0 8px var(--neon-green);
+      transform: translateY(-2px);
+    }
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--neon-green);
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .hero {
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .glass-container {
+      background: var(--black-glass);
+      backdrop-filter: var(--blur);
+      border-radius: 15px;
+      padding: 3rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+      animation: glowFade 4s ease-in-out infinite;
+    }
+    @keyframes glowFade {
+      0%, 100% { box-shadow: 0 0 30px rgba(57, 255, 20, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(57, 255, 20, 0.7); }
+    }
+    h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 3.5rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 15px var(--neon-green);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 2.2rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+      margin: 2.5rem 0 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+    ul {
+      list-style: none;
+      padding-left: 20px;
+      margin-bottom: 1.5rem;
+    }
+    ul li {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    ul li::before {
+      content: '•';
+      color: var(--neon-green);
+      position: absolute;
+      left: -20px;
+      font-size: 1.8rem;
+    }
+    .chart-container {
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .timeline {
+      max-width: 800px;
+      margin: 2rem auto;
+      position: relative;
+    }
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      margin: 50px 0;
+    }
+    .timeline-content {
+      background: var(--black-glass);
+      backdrop-filter: var(--blur);
+      padding: 20px;
+      border-radius: 12px;
+      width: 45%;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+    }
+    .timeline-dot {
+      width: 20px;
+      height: 20px;
+      background: var(--neon-green);
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px var(--neon-green);
+    }
+    .download-btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: #000000;
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-family: 'Roboto', sans-serif;
+      transition: all 0.3s ease;
+    }
+    .download-btn:hover {
+      background: var(--neon-green);
+      color: #000000;
+      box-shadow: 0 0 25px var(--neon-green);
+      transform: scale(1.05);
+    }
+    .custom-footer {
+      background: #000000;
+      padding: 30px;
+      text-align: center;
+      color: var(--gray);
+      border-top: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .social-links {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    .social-links a {
+      color: var(--neon-green);
+      font-size: 2.2rem;
+      transition: all 0.3s ease;
+    }
+    .social-links a:hover {
+      transform: scale(1.2);
+      text-shadow: 0 0 15px var(--neon-green);
+    }
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: row;
+        align-items: center;
+      }
+      .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #000000;
+        padding: 20px;
+        border-bottom: 2px solid var(--neon-green);
+      }
+      .navbar-links.active {
+        display: flex;
+      }
+      .navbar-toggle {
+        display: block;
+      }
+      .navbar-brand span {
+        font-size: 1.8rem;
+      }
+      .glass-container {
+        max-width: 90%;
+        padding: 2rem;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+      }
+      .chart-container {
+        max-width: 90%;
+      }
+      .timeline-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .timeline-content {
+        width: 80%;
+        margin-left: 40px;
+      }
+      .timeline-dot {
+        left: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <nav class="custom-navbar">
+    <div class="navbar-container">
+      <a href="/presale" class="navbar-brand"><span>RippleBids</span></a>
+      <button class="navbar-toggle" onclick="toggleMenu()" aria-label="Toggle navigation">☰</button>
+      <div class="navbar-links" id="navbar-links">
+        <a href="/presale" class="nav-link">Presale</a>
+        <a href="/whitepaper" class="nav-link">Whitepaper</a>
+        <a href="/roadmap" class="nav-link">Roadmap</a>
+        <a href="/tokenomics" class="nav-link active">Tokenomics</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/policy" class="nav-link">Policy</a>
+      </div>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="glass-container">
+      <h1>XRPB Tokenomics</h1>
+      <p>Welcome to XRPB, the heart of RippleBids, the marketplace of the future. This page explains how XRPB works, keeps our project thriving, and ensures stability, even if you’re new to crypto.</p>
+      <h2>What is XRPB?</h2>
+      <p>XRPB is our cryptocurrency token, used in RippleBids to buy, sell, and unlock premium features. It’s like digital money on the XRP Ledger (XRPL), making transactions fast (~3 seconds), cheap (~$0.01), and secure.</p>
+      <h2>Total Supply: 3 Billion XRPB</h2>
+      <p>We’ve created 3 billion XRPB tokens, split to grow the platform and benefit users:</p>
+      <div class="chart-container">
+        <canvas id="tokenomics-chart"></canvas>
+      </div>
+      <ul>
+        <li><strong>Public Ecosystem (35%, 1.05B XRPB)</strong>: Presale (500M, 1 XRP = 5,000 XRPB) and public sales fund development and reward early supporters.</li>
+        <li><strong>Community/Affiliate Fund (10%, 300M XRPB)</strong>: For giveaways, affiliate marketing, and engagement to grow our global community.</li>
+        <li><strong>Reserve (13%, 390M XRPB)</strong>: Held for partnerships or unexpected costs, ensuring long-term stability.</li>
+        <li><strong>Liquidity Pool (10%, 300M XRPB)</strong>: Locked in XRPL decentralized exchanges (e.g., Sologenic) for smooth trading and price stability.</li>
+        <li><strong>Board Holdings (32%, 960M XRPB)</strong>: Locked for 8-14 months for team alignment.
+          <ul>
+            <li>CEO (10%, 300M XRPB)</li>
+            <li>Other Executives (5.5% each, 165M XRPB)</li>
+          </ul>
+        </li>
+      </ul>
+      <h2>Keeping the Project Thriving</h2>
+      <p>RippleBids earns through:</p>
+      <ul>
+        <li><strong>Processing Fees (1.5-3.5%)</strong>: Lower than Amazon/eBay’s 10-15%. A $100 sale costs $1.50-$3.50.</li>
+        <li><strong>Seller Memberships ($25-$50/month)</strong>: Verified badges, lower fees, scam prevention.</li>
+      </ul>
+      <p>These fund development, marketing, and operations.</p>
+      <h2>Locking Liquidity</h2>
+      <p>We lock 300M XRPB (10%) in XRPL liquidity pools on launch (Aug 1, 2025) for stable trading, secured by XRPL’s blockchain.</p>
+      <h2>Team Vesting</h2>
+      <p>Board’s 960M XRPB (32%) is locked for 8-14 months, ensuring long-term commitment.</p>
+      <h2>Secure Governance</h2>
+      <p>Funds are in a multi-signature XRPL wallet, requiring all board members (Brendyn Tvaroch, Devin Harris, Tim Tvaroch) to agree, using Xaman and XRPL Labs tools (xrptoolkit.com).</p>
+      <h2>Timeline</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h2>May 19, 2025: Presale</h2>
+            <p>500M XRPB (100k XRP) to fund RippleBids.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h2>Aug 1, 2025: Launch & Liquidity</h2>
+            <p>Launch marketplace, lock 300M XRPB in liquidity pools.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h2>Jan 2026: Community Rewards</h2>
+            <p>Distribute 300M XRPB for affiliates and engagement.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h2>Mar 2026: Vesting Begins</h2>
+            <p>Board holdings unlock over 8-14 months.</p>
+          </div>
+        </div>
+      </div>
+      <h2>Why XRPB?</h2>
+      <p>XRPB powers a marketplace faster, cheaper, and more transparent than Amazon/eBay. Join our presale to be part of the future!</p>
+      <a href="/presale" class="download-btn">Join the Presale</a>
+    </div>
+  </section>
+  <footer class="custom-footer">
+    <div class="footer-content">
+      <p>© 2025 RippleBids. All rights reserved.</p>
+      <div class="social-links">
+        <a href="https://x.com/ripplebids" target="_blank"><i class="fab fa-x"></i></a>
+        <a href="https://t.me/ripplebids" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="https://www.tiktok.com/@ripplebids" target="_blank"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('navbar-links').classList.toggle('active');
+    }
+    function initBackground() {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 2 + 1,
+          vx: Math.random() * 0.5 - 0.25,
+          vy: Math.random() * 0.5 - 0.25
+        });
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(57, 255, 20, 0.5)';
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+    function initChart() {
+      const ctx = document.getElementById('tokenomics-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Public Ecosystem (35%)', 'Community/Affiliate (10%)', 'Reserve (13%)', 'Liquidity Pool (10%)', 'Board Holdings (32%)'],
+          datasets: [{
+            data: [35, 10, 13, 10, 32],
+            backgroundColor: ['#39FF14', '#28A745', '#CCCCCC', '#1A1A1A', '#FFFFFF'],
+            borderColor: '#000000',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#FFFFFF',
+                font: { size: 14, family: 'Roboto' }
+              }
+            }
+          }
+        }
+      });
+    }
+    window.onload = () => {
+      initBackground();
+      initChart();
+    };
+  </script>
+</body>
+</html>
