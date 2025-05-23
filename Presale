@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RippleBids Presale - The Marketplace of the Future</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Exo+2:wght@700;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/xrpl@3.0.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.8.0/dist/cjs/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/qrcode-modal@1.8.0/dist/cjs/index.min.js"></script>
+  <style>
+    :root {
+      --neon-green: #39FF14;
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray: #CCCCCC;
+      --tinted-black: rgba(0, 0, 0, 0.7);
+      --blur: blur(10px);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: url('https://wallpaperaccess.com/full/660479.jpg') center/cover;
+      color: var(--white);
+      overflow-x: hidden;
+      position: relative;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .custom-navbar {
+      background: var(--black);
+      padding: 15px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .navbar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+    .navbar-brand span {
+      color: var(--neon-green);
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-family: 'Exo 2', sans-serif;
+      text-shadow: 0 0 15px var(--neon-green);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 15px;
+      background: var(--tinted-black);
+      border: 2px solid var(--neon-green);
+      border-radius: 6px;
+      transition: transform 0.3s ease;
+    }
+    .navbar-brand:hover span {
+      transform: scale(1.05);
+    }
+    .navbar-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Roboto', sans-serif;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-top: 2px solid var(--neon-green);
+      border-left: 2px solid var(--neon-green);
+      border-bottom: none;
+      border-right: none;
+      border-radius: 6px;
+      background: var(--black);
+      transition: all 0.3s ease;
+      line-height: 1.2;
+    }
+    .navbar-links a:hover, .navbar-links a.active {
+      color: var(--black);
+      background: linear-gradient(45deg, var(--neon-green), #28a745);
+      box-shadow: 0 0 12px var(--neon-green);
+      transform: scale(1.03);
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--neon-green);
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .glass-container {
+      background: var(--tinted-black);
+      backdrop-filter: var(--blur);
+      border-radius: 15px;
+      padding: 3rem;
+      max-width: 500px;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+      animation: glowFade 4s ease-in-out infinite;
+    }
+    @keyframes glowFade {
+      0%, 100% { box-shadow: 0 0 30px rgba(57, 255, 20, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(57, 255, 20, 0.7); }
+    }
+    h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 3.5rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 15px var(--neon-green);
+      margin-bottom: 1.5rem;
+    }
+    p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 2rem;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    input[type="number"], input[type="email"], input[type="text"], textarea {
+      padding: 15px;
+      border: 2px solid var(--neon-green);
+      border-radius: 10px;
+      background: var(--tinted-black);
+      color: var(--white);
+      font-size: 1.1rem;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+    input:focus, textarea:focus {
+      box-shadow: 0 0 20px var(--neon-green);
+    }
+    button, .invest-btn {
+      background: var(--black);
+      color: var(--neon-green);
+      padding: 15px 30px;
+      border-top: 2px solid var(--neon-green);
+      border-left: 2px solid var(--neon-green);
+      border-bottom: none;
+      border-right: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-family: 'Roboto', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    button:hover, .invest-btn:hover {
+      background: linear-gradient(45deg, var(--neon-green), #28a745);
+      color: var(--black);
+      box-shadow: 0 0 25px var(--neon-green);
+      transform: scale(1.05);
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .error-message {
+      background: #dc3545;
+      color: var(--white);
+      padding: 1.2rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      display: none;
+    }
+    #progress-text {
+      font-size: 1.4rem;
+      color: var(--neon-green);
+      margin-top: 1.5rem;
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .progress-container {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      background: var(--tinted-black);
+      border-radius: 25px;
+      overflow: hidden;
+      margin-top: 20px;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-green), #28a745);
+      transition: width 1s ease;
+      position: relative;
+      animation: pulseBar 2s infinite;
+    }
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 30px 30px;
+      animation: moveStripes 1s linear infinite;
+    }
+    @keyframes pulseBar {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+    @keyframes moveStripes {
+      0% { background-position: 0 0; }
+      100% { background-position: 30px 30px; }
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: var(--tinted-black);
+      backdrop-filter: var(--blur);
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+      text-align: center;
+    }
+    .popup-content h2 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 2rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+      margin-bottom: 1rem;
+    }
+    .popup-content input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      background: var(--tinted-black);
+      color: var(--white);
+      font-size: 1rem;
+    }
+    .popup-content button {
+      width: 100%;
+    }
+    .custom-footer {
+      background: var(--black);
+      padding: 30px;
+      text-align: center;
+      color: var(--gray);
+      border-top: 2px solid var(--neon-green);
+      backdrop-filter: var(--blur);
+    }
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .social-links {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    .social-links a {
+      color: var(--neon-green);
+      font-size: 2.2rem;
+      transition: all 0.3s ease;
+    }
+    .social-links a:hover {
+      transform: scale(1.2);
+      text-shadow: 0 0 15px var(--neon-green);
+    }
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: row;
+        align-items: center;
+      }
+      .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--black);
+        padding: 15px;
+        border-bottom: 2px solid var(--neon-green);
+      }
+      .navbar-links.active {
+        display: flex;
+      }
+      .navbar-toggle {
+        display: block;
+      }
+      .navbar-brand span {
+        font-size: 1.8rem;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      .glass-container {
+        max-width: 90%;
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <nav class="custom-navbar">
+    <div class="navbar-container">
+      <a href="/presale" class="navbar-brand"><span>RippleBids</span></a>
+      <button class="navbar-toggle" onclick="toggleMenu()" aria-label="Toggle navigation">☰</button>
+      <div class="navbar-links" id="navbar-links">
+        <a href="/presale" class="nav-link active">Presale</a>
+        <a href="/whitepaper" class="nav-link">Whitepaper</a>
+        <a href="/roadmap" class="nav-link">Roadmap</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/policy" class="nav-link">Rules & Policy</a>
+        <a href="/tokenomics" class="nav-link">Tokenomics</a>
+      </div>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="glass-container">
+      <h1>RippleBids Presale</h1>
+      <p>The future of buying and selling is here. Join the XRP-powered marketplace revolutionizing Amazon and eBay.</p>
+      <div class="error-message" id="error-message"></div>
+      <div class="input-group">
+        <input type="number" id="xrp-amount" placeholder="Enter XRP (min 1)" min="1" step="0.1">
+        <button onclick="connectWallet()">Connect Wallet</button>
+        <button onclick="contribute()">Buy XRPB</button>
+      </div>
+      <p id="progress-text">Loading progress...</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <a
